@@ -54,21 +54,21 @@ export class App implements OnInit {
   }
 
   cargarProductos() {
-    this.http.get('http://https://api-sistemaventas.onrender.com/api/productos/').subscribe((data: any) => {
+    this.http.get('https://api-sistemaventas.onrender.com/api/productos/').subscribe((data: any) => {
       this.productos = data;
       this.cdr.detectChanges();
     });
   }
 
   cargarLotes() {
-    this.http.get('http://https://api-sistemaventas.onrender.com/api/lotes/').subscribe((data: any) => {
+    this.http.get('https://api-sistemaventas.onrender.com/api/lotes/').subscribe((data: any) => {
       this.lotesDisponibles = data.filter((lote: any) => lote.cantidad_disponible > 0);
       this.cdr.detectChanges();
     });
   }
 
   cargarCaja() {
-    this.http.get('http://https://api-sistemaventas.onrender.com/api/caja/').subscribe((data: any) => {
+    this.http.get('https://api-sistemaventas.onrender.com/api/caja/').subscribe((data: any) => {
       this.transaccionesCaja = data;
       this.totalEnCaja = this.transaccionesCaja.reduce((total, t) => {
         const monto = parseFloat(t.monto);
@@ -130,7 +130,7 @@ export class App implements OnInit {
   }
 
   cargarDeudas() {
-    this.http.get('http://https://api-sistemaventas.onrender.com/api/cuentas-cobrar/').subscribe((data: any) => {
+    this.http.get('https://api-sistemaventas.onrender.com/api/cuentas-cobrar/').subscribe((data: any) => {
       this.deudasPendientes = data.filter((d: any) => d.estado === 'PENDIENTE');
       this.cdr.detectChanges();
     });
@@ -179,7 +179,7 @@ export class App implements OnInit {
       metodo_pago: this.metodoPago 
     };
 
-    this.http.post('http://https://api-sistemaventas.onrender.com/api/ventas/', datosVenta).subscribe({
+    this.http.post('https://api-sistemaventas.onrender.com/api/ventas/', datosVenta).subscribe({
       next: (ventaCreada: any) => {
         const idVenta = ventaCreada.id;
 
@@ -190,7 +190,7 @@ export class App implements OnInit {
             cantidad_vendida: item.cantidad, 
             precio_venta: item.precio 
           };
-          this.http.post('http://https://api-sistemaventas.onrender.com/api/detalles-venta/', detalle).subscribe();
+          this.http.post('https://api-sistemaventas.onrender.com/api/detalles-venta/', detalle).subscribe();
         });
 
         if (this.metodoPago === 'FIADO') {
@@ -201,7 +201,7 @@ export class App implements OnInit {
             monto_pagado_hasta_ahora: 0,
             estado: 'PENDIENTE'
           };
-          this.http.post('http://https://api-sistemaventas.onrender.com/api/cuentas-cobrar/', datosDeuda).subscribe(() => {
+          this.http.post('https://api-sistemaventas.onrender.com/api/cuentas-cobrar/', datosDeuda).subscribe(() => {
             this.cargarDeudas(); 
           });
         }
@@ -227,7 +227,7 @@ export class App implements OnInit {
       return;
     }
 
-    this.http.post('http://https://api-sistemaventas.onrender.com/api/productos/', this.nuevoProducto).subscribe({
+    this.http.post('https://api-sistemaventas.onrender.com/api/productos/', this.nuevoProducto).subscribe({
       next: (productoCreado: any) => {
         const datosLote = {
           producto: productoCreado.id,
@@ -236,7 +236,7 @@ export class App implements OnInit {
           precio_compra: this.nuevoLote.precio_compra,
           precio_venta: 0 
         };
-        this.http.post('http://https://api-sistemaventas.onrender.com/api/lotes/', datosLote).subscribe({
+        this.http.post('https://api-sistemaventas.onrender.com/api/lotes/', datosLote).subscribe({
           next: () => {
             if (this.pagarConCaja && costoTotalCompra > 0) {
               const registroGasto = {
@@ -244,7 +244,7 @@ export class App implements OnInit {
                 monto: costoTotalCompra,
                 descripcion: `Compra Mercadería: ${this.nuevoLote.cantidad}x ${this.nuevoProducto.nombre}`
               };
-              this.http.post('http://https://api-sistemaventas.onrender.com/api/caja/', registroGasto).subscribe(() => {
+              this.http.post('https://api-sistemaventas.onrender.com/api/caja/', registroGasto).subscribe(() => {
                 this.cargarCaja();
                 this.limpiarFormularioInventario(true);
               });
@@ -288,7 +288,7 @@ export class App implements OnInit {
     const nuevoPagado = pagadoHastaAhora + abono;
     const nuevoEstado = nuevoPagado >= montoDeuda ? 'PAGADO' : 'PENDIENTE';
 
-    this.http.patch(`http://https://api-sistemaventas.onrender.com/api/cuentas-cobrar/${deuda.id}/`, {
+    this.http.patch(`https://api-sistemaventas.onrender.com/api/cuentas-cobrar/${deuda.id}/`, {
       monto_pagado_hasta_ahora: nuevoPagado,
       estado: nuevoEstado
     }).subscribe({
@@ -299,7 +299,7 @@ export class App implements OnInit {
           descripcion: `Abono de Fiado: ${deuda.nombre_cliente} (Ref: Venta #${deuda.venta_asociada})`
         };
 
-        this.http.post('http://https://api-sistemaventas.onrender.com/api/caja/', registroCaja).subscribe(() => {
+        this.http.post('https://api-sistemaventas.onrender.com/api/caja/', registroCaja).subscribe(() => {
           if (nuevoEstado === 'PAGADO') {
             alert(`¡Excelente! ${deuda.nombre_cliente} ha liquidado toda su deuda.`);
           } else {
@@ -316,20 +316,20 @@ export class App implements OnInit {
     const confirmacion = confirm(`¿Estás seguro de que ${deuda.nombre_cliente} devolvió los productos?\nEsto cancelará la deuda y los productos regresarán a tu inventario.`);
     if (!confirmacion) return;
 
-    this.http.get('http://https://api-sistemaventas.onrender.com/api/detalles-venta/').subscribe((detalles: any) => {
+    this.http.get('https://api-sistemaventas.onrender.com/api/detalles-venta/').subscribe((detalles: any) => {
       const detallesDeEstaVenta = detalles.filter((d: any) => d.venta === deuda.venta_asociada);
 
       detallesDeEstaVenta.forEach((detalle: any) => {
-        this.http.get(`http://https://api-sistemaventas.onrender.com/api/lotes/${detalle.lote_origen}/`).subscribe((lote: any) => {
+        this.http.get(`https://api-sistemaventas.onrender.com/api/lotes/${detalle.lote_origen}/`).subscribe((lote: any) => {
           const stockRecuperado = lote.cantidad_disponible + detalle.cantidad_vendida;
           
-          this.http.patch(`http://https://api-sistemaventas.onrender.com/api/lotes/${lote.id}/`, {
+          this.http.patch(`https://api-sistemaventas.onrender.com/api/lotes/${lote.id}/`, {
             cantidad_disponible: stockRecuperado
           }).subscribe();
         });
       });
 
-      this.http.patch(`http://https://api-sistemaventas.onrender.com/api/cuentas-cobrar/${deuda.id}/`, {
+      this.http.patch(`https://api-sistemaventas.onrender.com/api/cuentas-cobrar/${deuda.id}/`, {
         estado: 'PAGADO',
         monto_deuda: 0,
         monto_pagado_hasta_ahora: 0
@@ -344,15 +344,15 @@ export class App implements OnInit {
   verReporteDiario() {
     const hoyStr = new Date().toLocaleDateString();
 
-    this.http.get('http://https://api-sistemaventas.onrender.com/api/ventas/').subscribe((ventas: any) => {
+    this.http.get('https://api-sistemaventas.onrender.com/api/ventas/').subscribe((ventas: any) => {
       const ventasHoy = ventas.filter((v: any) => new Date(v.fecha_hora).toLocaleDateString() === hoyStr);
       const totalVendidoHoy = ventasHoy.reduce((sum: number, v: any) => sum + parseFloat(v.total_venta), 0);
       const idsVentasHoy = ventasHoy.map((v: any) => v.id);
 
-      this.http.get('http://https://api-sistemaventas.onrender.com/api/detalles-venta/').subscribe((detalles: any) => {
+      this.http.get('https://api-sistemaventas.onrender.com/api/detalles-venta/').subscribe((detalles: any) => {
         const detallesHoy = detalles.filter((d: any) => idsVentasHoy.includes(d.venta));
 
-        this.http.get('http://https://api-sistemaventas.onrender.com/api/lotes/').subscribe((lotes: any) => {
+        this.http.get('https://api-sistemaventas.onrender.com/api/lotes/').subscribe((lotes: any) => {
           let resumenProductos: any = {};
           
           detallesHoy.forEach((d: any) => {
@@ -411,7 +411,7 @@ export class App implements OnInit {
       descripcion: this.nuevaSalida.descripcion
     };
 
-    this.http.post('http://https://api-sistemaventas.onrender.com/api/caja/', registroSalida).subscribe({
+    this.http.post('https://api-sistemaventas.onrender.com/api/caja/', registroSalida).subscribe({
       next: () => {
         alert('✅ Salida de dinero registrada y descontada con éxito.');
         this.cargarCaja(); 
